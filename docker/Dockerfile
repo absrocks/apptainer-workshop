@@ -10,7 +10,6 @@ ARG GROMACS_VERSION=2026.2
 # Target GPU architectures.
 #   70 = V100, 75 = T4 / RTX 20xx, 80 = A100, 86 = A40 / RTX 30xx / L4,
 #   89 = L40 / RTX 40xx / RTX 6000 Ada, 90 = H100 / GH200
-# Edit/remove entries to shrink binary size and build time.
 ARG CUDA_ARCHITECTURES="70;75;80;86;89;90"
 
 # ============================================================================
@@ -25,7 +24,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 # --- toolchain & deps ------------------------------------------------------
 # build-essential pulls GCC 11 on Ubuntu 22.04, which is supported by both
 # CUDA 12.x and GROMACS 2026. cmake from apt is currently 3.22; GROMACS 2026
-# requires >= 3.28, so we install cmake from Kitware's apt repository.
+# requires >= 3.28
 RUN apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates gnupg wget curl git \
         build-essential \
