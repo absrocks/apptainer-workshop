@@ -65,3 +65,7 @@ The image is compiled for these NVIDIA GPU generations: V100, T4, RTX 20xx/30xx/
 2. Add `<app>` to the `matrix.app` list in [.github/workflows/build-and-push.yml](.github/workflows/build-and-push.yml).
 
 On the next push, GitHub Actions builds the recipe and publishes it as `ghcr.io/absrocks/apptainer-workshop/<app>:latest`.
+
+## License
+
+The recipes and workflow files in this repository are released under the [MIT License](LICENSE). The software inside the images, such as GROMACS and the NVIDIA CUDA libraries, remains under its own licenses.
