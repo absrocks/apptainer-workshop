@@ -10,6 +10,11 @@ jobs:
       contents: read
       packages: write
 
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [gromacs]
+
     steps:
       - uses: actions/checkout@v4
 
@@ -17,7 +22,7 @@ jobs:
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Build image
-        run: docker build -t ghcr.io/absrocks/gromacs-apptainer:latest -f docker/Dockerfile .
+        run: docker build -t ghcr.io/absrocks/${{ matrix.app }}:latest -f docker/${{ matrix.app }}_Dockerfile .
 
       - name: Push image
-        run: docker push ghcr.io/absrocks/gromacs-apptainer:latest
+        run: docker push ghcr.io/absrocks/${{ matrix.app }}:latest
