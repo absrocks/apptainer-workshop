@@ -25,4 +25,11 @@ jobs:
         run: docker build -t ghcr.io/${{ github.repository }}/${{ matrix.app }}:latest -f docker/${{ matrix.app }}_Dockerfile .
 
       - name: Push image
-        run: docker push ghcr.io/${{ github.repository }}/${{ matrix.app }}:latest
+        run: |
+          image=ghcr.io/${{ github.repository }}/${{ matrix.app }}:latest
+          for attempt in 1 2 3; do
+            if docker push "$image"; then exit 0; fi
+            echo "Push attempt $attempt failed; retrying in 20s"
+            sleep 20
+          done
+          exit 1
