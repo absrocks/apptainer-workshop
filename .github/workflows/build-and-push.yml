@@ -22,7 +22,7 @@ jobs:
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Build image
-        run: docker build -t ghcr.io/absrocks/${{ matrix.app }}:latest -f docker/${{ matrix.app }}_Dockerfile .
+        run: docker build -t ghcr.io/${{ github.repository }}/${{ matrix.app }}:latest -f docker/${{ matrix.app }}_Dockerfile .
 
       - name: Push image
-        run: docker push ghcr.io/absrocks/${{ matrix.app }}:latest
+        run: docker push ghcr.io/${{ github.repository }}/${{ matrix.app }}:latest
