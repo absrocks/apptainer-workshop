@@ -1,0 +1,83 @@
+# Examples to build into the opendihu image.
+#
+# One directory per line, relative to $OPENDIHU_HOME/examples. Each directory must
+# contain an SConstruct file. Blank lines and lines starting with '#' are ignored.
+# The list follows https://opendihu.readthedocs.io/en/latest/user/existing_examples.html
+# Remove lines to shorten the image build; add lines to build more examples.
+
+# --- Laplace and Poisson ---
+laplace/laplace1d
+laplace/laplace2d
+laplace/laplace3d
+laplace/laplace3d_surface
+laplace/laplace_composite
+poisson/poisson1d
+poisson/poisson2d
+
+# --- Diffusion ---
+diffusion/diffusion1d
+diffusion/diffusion2d
+diffusion/diffusion3d
+diffusion/anisotropic_diffusion
+diffusion/reaction_diffusion2d
+
+# --- Fiber tracing ---
+fiber_tracing/parallel_fiber_estimation
+
+# --- Solid mechanics ---
+solid_mechanics/linear_elasticity/box
+solid_mechanics/linear_elasticity/with_3d_activation
+solid_mechanics/linear_elasticity/with_fiber_activation
+solid_mechanics/mooney_rivlin_isotropic
+solid_mechanics/mooney_rivlin_transiso
+solid_mechanics/dynamic_mooney_rivlin/rod
+solid_mechanics/dynamic_mooney_rivlin/gelatine1
+solid_mechanics/dynamic_mooney_rivlin/gelatine2
+solid_mechanics/dynamic_mooney_rivlin/muscle
+solid_mechanics/dynamic_mooney_rivlin/muscle_with_fat
+solid_mechanics/dynamic_mooney_rivlin/tendon
+solid_mechanics/custom_material
+solid_mechanics/tensile_test
+solid_mechanics/shear_test
+
+# --- Electrophysiology: CellML ---
+electrophysiology/cellml/shorten
+electrophysiology/cellml/hodgkin-huxley_shorten_ocallaghan_davidson_soboleva_2007
+
+# --- Electrophysiology: monodomain ---
+electrophysiology/monodomain/hodgkin_huxley
+electrophysiology/monodomain/hodgkin_huxley_fast
+electrophysiology/monodomain/motoneuron_hodgkin_huxley
+electrophysiology/monodomain/motoneuron_cisi_kohn
+electrophysiology/monodomain/hodgkin_huxley-razumova
+electrophysiology/monodomain/shorten_ocallaghan_davidson_soboleva_2007
+electrophysiology/monodomain/new_slow_TK_2014_12_08
+electrophysiology/monodomain/hodgkin-huxley_shorten_ocallaghan_davidson_soboleva_2007
+
+# --- Electrophysiology: fibers ---
+electrophysiology/fibers/multiple_fibers
+electrophysiology/fibers/multiple_fibers_cubes_partitioning
+electrophysiology/fibers/fibers_emg
+electrophysiology/fibers/cuboid
+electrophysiology/fibers/fibers_fat_emg
+electrophysiology/fibers/analytical_fibers_emg
+electrophysiology/fibers/load_balancing
+electrophysiology/fibers/fibers_contraction/no_precice/biceps
+
+# --- Electrophysiology: multidomain ---
+electrophysiology/multidomain/static_bidomain
+electrophysiology/multidomain/multidomain_no_fat
+electrophysiology/multidomain/multidomain_with_fat
+electrophysiology/multidomain/multidomain_contraction
+electrophysiology/multidomain/multidomain_motoneuron
+
+# --- Electrophysiology: neuromuscular ---
+electrophysiology/neuromuscular/only_neurons_hodgkin_huxley
+electrophysiology/neuromuscular/only_neurons_mileusenic
+electrophysiology/neuromuscular/only_neurons_hierarchical_structure
+electrophysiology/neuromuscular/neurons_with_contraction
+
+# --- Left out: these need software that is not installed in this image ---
+# solid_mechanics/mooney_rivlin_febio                                   (needs FEBio)
+# solid_mechanics/chaste                                                (needs Chaste)
+# electrophysiology/fibers/fibers_contraction/with_tendons_precice      (needs preCICE)
