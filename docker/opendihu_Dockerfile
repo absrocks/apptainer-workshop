@@ -1,0 +1,63 @@
+FROM ubuntu:24.04
+
+# Install prerequisites
+RUN apt-get update && \
+    apt-get install -y \
+    git \
+    wget unzip \
+    build-essential petsc-dev bison flex libeigen3-dev libxml2-dev libboost-all-dev \
+    cmake \
+    libffi-dev \
+    vim \
+    python-is-python3 python3-setuptools
+
+
+# git -> Dockerfile
+# wget unzip -> Download dependencies
+# build-essential petsc-dev bison flex libeigen3-dev libxml2-dev libboost-all-dev -> PETSc
+# cmake -> base64
+# libffi-dev -> Solves error at run time: ModuleNotFoundError: No module named '_ctypes’
+# vim -> optional
+# python-is-python3 -> make `python` point to python3 (needed for some scripts that call python instead of python3)
+# python3-setuptools -> provides `distutils`, needed for PETSc
+
+WORKDIR /workspace
+
+# Clone opendihu
+RUN git clone --branch develop https://github.com/opendihu/opendihu.git
+WORKDIR opendihu
+
+# Build opendihu, debug and release target for core, build release unit tests and run tests, build all examples
+RUN make release_without_tests; echo "make release_without_tests done"; cat config.log
+
+# Set environment variable such that OpenMPI works inside docker container (run as root)
+ENV OMPI_ALLOW_RUN_AS_ROOT=1
+ENV OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
+ENV OMPI_MCA_btl_vader_single_copy_mechanism=none
+ENV OMPI_MCA_osc=ucx
+
+# opendihu location and helper scripts. These are set with ENV, not in a shell
+# startup file, so they also apply under Apptainer, which does not read ~/.bashrc.
+ENV OPENDIHU_HOME=/workspace/opendihu
+ENV PATH=$PATH:$OPENDIHU_HOME/scripts:$OPENDIHU_HOME/scripts/geometry_manipulation:$OPENDIHU_HOME/scripts/file_manipulation
+
+# Apptainer cannot use shell aliases, so install the opendihu build shortcuts as
+# real commands in /usr/local/bin. They mirror the aliases in .bash_aliases.
+# OPENDIHU_HOME is read when a command runs, so it can be overridden at run time.
+RUN set -e; cd /usr/local/bin; \
+    printf '#!/bin/bash\nexec "$OPENDIHU_HOME/dependencies/scons/scons.py" "$@"\n' > scons; \
+    printf '#!/bin/bash\nexec scons "$@"\n' > s; \
+    printf '#!/bin/bash\nexec scons BUILD_TYPE=d no_tests=yes no_examples=yes "$@"\n' > sdn; \
+    printf '#!/bin/bash\nexec scons BUILD_TYPE=r no_tests=yes no_examples=yes "$@"\n' > srn; \
+    printf '#!/bin/bash\ncd .. && exec scons BUILD_TYPE=d no_tests=yes no_examples=yes "$@"\n' > sddn; \
+    for name in sd sdd sr srd srr mkor mkorn mkod mkodn mkordn; do \
+        printf '#!/bin/bash\nexec bash "$OPENDIHU_HOME/scripts/shortcuts/%s.sh" "$@"\n' "$name" > "$name"; \
+    done; \
+    chmod +x scons s sdn srn sddn sd sdd sr srd srr mkor mkorn mkod mkodn mkordn
+
+# Aliases, cd shortcuts and prompt for interactive Docker shells (run as root).
+COPY docker/opendihu_bash_aliases /workspace/.bash_aliases
+RUN echo ". /workspace/.bash_aliases " >> ~/.bashrc
+
+# Download input files
+RUN cd examples/electrophysiology && wget https://zenodo.org/records/4705982/files/input.tgz && tar xf input.tgz
